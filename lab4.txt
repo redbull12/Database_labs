@@ -1,0 +1,66 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Пароль пользователя postgres:
+psql (17.6)
+ПРЕДУПРЕЖДЕНИЕ: Кодовая страница консоли (866) отличается от основной
+                страницы Windows (1251).
+                8-битовые (русские) символы могут отображаться некорректно.
+                Подробнее об этом смотрите документацию psql, раздел
+                "Notes for Windows users".
+Введите "help", чтобы получить справку.
+
+postgres=# CREATE TABLE students (id SERIAL PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), faculty VARCHAR(100));
+CREATE TABLE
+postgres=# INSERT INTO students (name, email, faculty) VALUES ('Alymbek', 'alymbek@example.com', 'COMESH'), ('Timur', 'timur@example.com', 'MED'), ('Beka', 'beka@example.com', 'MAT');
+INSERT 0 3
+postgres=# SELECT name, email FROM students;
+  name   |        email
+---------+---------------------
+ Alymbek | alymbek@example.com
+ Timur   | timur@example.com
+ Beka    | beka@example.com
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT * FROM students;
+ id |  name   |        email        | faculty
+----+---------+---------------------+---------
+  1 | Alymbek | alymbek@example.com | COMESH
+  2 | Timur   | timur@example.com   | MED
+  3 | Beka    | beka@example.com    | MAT
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT id, faculty FROM students;
+ id | faculty
+----+---------
+  1 | COMESH
+  2 | MED
+  3 | MAT
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT name, email FROM students WHERE name = 'Timur';
+ name  |       email
+-------+-------------------
+ Timur | timur@example.com
+(1 ёЄЁюър)
+
+
+postgres=# SELECT name/ email FROM students ORDER BY;
+ОШИБКА:  ошибка синтаксиса (примерное положение: ";")
+СТРОКА 1: SELECT name/ email FROM students ORDER BY;
+                                                   ^
+postgres=# SELECT name, email FROM students LIMIT 2;
+  name   |        email
+---------+---------------------
+ Alymbek | alymbek@example.com
+ Timur   | timur@example.com
+(2 ёЄЁюъш)
+
+
+postgres=# --comment
+postgres=# /* multi line comment*/
+postgres-#

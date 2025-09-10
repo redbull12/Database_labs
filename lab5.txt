@@ -1,0 +1,27 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Пароль пользователя postgres:
+psql (17.6)
+ПРЕДУПРЕЖДЕНИЕ: Кодовая страница консоли (866) отличается от основной
+                страницы Windows (1251).
+                8-битовые (русские) символы могут отображаться некорректно.
+                Подробнее об этом смотрите документацию psql, раздел
+                "Notes for Windows users".
+Введите "help", чтобы получить справку.
+
+postgres=# CREATE DATABASE university;
+CREATE DATABASE
+postgres=# \c university
+Вы подключены к базе данных "university" как пользователь "postgres".
+university=# psql -d university -U postgres
+university-# \c postgres;
+Вы подключены к базе данных "postgres" как пользователь "postgres".
+postgres-# DROP DATABASE university;
+ОШИБКА:  ошибка синтаксиса (примерное положение: "psql")
+СТРОКА 1: psql -d university -U postgres
+          ^
+postgres=# DROP DATABASE university;
+DROP DATABASE
+postgres=#

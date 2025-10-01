@@ -1,0 +1,38 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Пароль пользователя postgres:
+psql (17.6)
+ПРЕДУПРЕЖДЕНИЕ: Кодовая страница консоли (866) отличается от основной
+                страницы Windows (1251).
+                8-битовые (русские) символы могут отображаться некорректно.
+                Подробнее об этом смотрите документацию psql, раздел
+                "Notes for Windows users".
+Введите "help", чтобы получить справку.
+
+postgres=# CREATE TABLE students (
+postgres(# student_id SERIAL PRIMARY KEY,
+postgres(# first_name VARCHAR(50),
+postgres(# last_name VARCHAR(50),
+postgres(# birth_date DATE
+postgres(# );
+CREATE TABLE
+postgres=# INSERT INTO students (first_name, last_name, birth_date) VALUES ('Aibek', 'Sharshenov', '2002-05-12');
+INSERT 0 1
+postgres=# INSERT INTO students (first_name, last_name, birth_date) VALUES
+postgres-# ('Ainura', 'Toktomamatova', '2001-09-23'),
+postgres-# ('Bakyt', 'Mamatov', '2003-01-15'),
+postgres-# ('Gulzat', 'Sultanova', '2002-07-30');
+INSERT 0 3
+postgres=# UPDATE students SET birth_date = '2002-05-25' WHERE first_name = 'Aibek' AND 'last_name' = 'Sharshenov';
+UPDATE 0
+postgres=# DELETE FROM students WHERE first_name = 'Gulzat' AND last_name = 'Sultanova';
+DELETE 1
+postgres=# DELETE FROM students WHERE birth_date < '2002-01-01';
+DELETE 1
+postgres=# UPDATE students SET last_name = 'Bekov' WHERE last_name IN ('Uulu', 'Isakov');
+UPDATE 0
+postgres=# DELETE FROM students WHERE student_id IN (2, 3, 5);
+DELETE 1
+postgres=#

@@ -1,0 +1,124 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Пароль пользователя postgres:
+psql (17.6)
+ПРЕДУПРЕЖДЕНИЕ: Кодовая страница консоли (866) отличается от основной
+                страницы Windows (1251).
+                8-битовые (русские) символы могут отображаться некорректно.
+                Подробнее об этом смотрите документацию psql, раздел
+                "Notes for Windows users".
+Введите "help", чтобы получить справку.
+
+postgres=# CREATE TABLE employees (
+postgres(# emp_id SERIAL PRIMARY KEY,
+postgres(# name VARCHAR(50) NOT NULL,
+postgres(# last_name VARCHAR(50) NOT NULL,
+postgres(# department VARCHAR(50) NOT NULL
+postgres(# );
+CREATE TABLE
+postgres=# INSERT INTO employees (name, last_name, department) VALUES
+postgres-# ('Arsen', 'Bekov', 'SFW');
+INSERT 0 1
+postgres=# INSERT INTO employees (name, last_name, department) VALUES
+postgres-# ('Bek', 'Adenov', 'SFW'),
+postgres-# ('Bolot', 'Turatov', 'AMI');
+INSERT 0 2
+postgres=# ALTER TABLE employees ADD COLUMN salary DECIMAL(6, 1);
+ALTER TABLE
+postgres=# UPDATE employees SET salary = 90000 WHERE name IN ('Bek', 'Arsen');
+UPDATE 2
+postgres=# UPDATE employees SET salary = 95000 WHERE name = 'Bolot';
+UPDATE 1
+postgres=# SELECT * FROM employees
+postgres-# ;
+ emp_id | name  | last_name | department | salary
+--------+-------+-----------+------------+---------
+      1 | Arsen | Bekov     | SFW        | 90000.0
+      2 | Bek   | Adenov    | SFW        | 90000.0
+      3 | Bolot | Turatov   | AMI        | 95000.0
+(3 ёЄЁюъш)
+
+postgres=# SELECT name, department FROM employees;
+ name  | department
+-------+------------
+ Arsen | SFW
+ Bek   | SFW
+ Bolot | AMI
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT name, salary, salary*0,1 AS potential_bonus FROM employees;
+ name  | salary  | ?column? | potential_bonus
+-------+---------+----------+-----------------
+ Arsen | 90000.0 |      0.0 |               1
+ Bek   | 90000.0 |      0.0 |               1
+ Bolot | 95000.0 |      0.0 |               1
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT name, salary, salary * 0,10 AS potential_bonus FROM employees;
+ name  | salary  | ?column? | potential_bonus
+-------+---------+----------+-----------------
+ Arsen | 90000.0 |      0.0 |              10
+ Bek   | 90000.0 |      0.0 |              10
+ Bolot | 95000.0 |      0.0 |              10
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT name, salary, salary * 0.10 AS potential_bonus FROM employees;
+ name  | salary  | potential_bonus
+-------+---------+-----------------
+ Arsen | 90000.0 |        9000.000
+ Bek   | 90000.0 |        9000.000
+ Bolot | 95000.0 |        9500.000
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT name, salary FROM employees WHERE department = 'SFW';
+ name  | salary
+-------+---------
+ Arsen | 90000.0
+ Bek   | 90000.0
+(2 ёЄЁюъш)
+
+
+postgres=# SELECT name FROM employees WHERE salary > 90000;
+ name
+-------
+ Bolot
+(1 ёЄЁюър)
+
+
+postgres=# SELECT name FROM employees WHERE name ~ '^[AC]';
+ name
+-------
+ Arsen
+(1 ёЄЁюър)
+
+
+postgres=# SELECT name FROM employees WHERE name ~ '^[BC]';
+ name
+-------
+ Bek
+ Bolot
+(2 ёЄЁюъш)
+
+
+postgres=# SELECT name, salary,
+postgres-# CASE
+postgres-# WHEN salary > 90000 THEN 'm'
+postgres-# WHEN salary = 90000 THEN 'n'
+postgres-# ELSE 'l'
+postgres-# END AS status
+postgres-# FROM employees;
+ name  | salary  | status
+-------+---------+--------
+ Arsen | 90000.0 | n
+ Bek   | 90000.0 | n
+ Bolot | 95000.0 | m
+(3 ёЄЁюъш)
+
+
+postgres=#

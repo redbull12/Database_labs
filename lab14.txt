@@ -1,0 +1,104 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Пароль пользователя postgres:
+psql (17.6)
+ПРЕДУПРЕЖДЕНИЕ: Кодовая страница консоли (866) отличается от основной
+                страницы Windows (1251).
+                8-битовые (русские) символы могут отображаться некорректно.
+                Подробнее об этом смотрите документацию psql, раздел
+                "Notes for Windows users".
+Введите "help", чтобы получить справку.
+
+postgres=# CREATE TABLE customers (
+postgres(#     customer_id SERIAL PRIMARY KEY,
+postgres(#     name VARCHAR(100),
+postgres(#     email VARCHAR(100)
+postgres(# );
+CREATE TABLE
+postgres=# CREATE TABLE orders (
+postgres(#     order_id SERIAL PRIMARY KEY,
+postgres(#     customer_id INTEGER REFERENCES customers(customer_id),
+postgres(#     order_date DATE,
+postgres(#     total_amount DECIMAL(10,2)
+postgres(# );
+CREATE TABLE
+postgres=# SELECT c.name, c.email, o.order_date, o.total_amount FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id;
+ name | email | order_date | total_amount
+------+-------+------------+--------------
+(0 ёЄЁюъ)
+
+
+postgres=# SELECT c.name, c.email, o.order_date, o.total_amount FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id;
+ name | email | order_date | total_amount
+------+-------+------------+--------------
+(0 ёЄЁюъ)
+
+
+postgres=# SELECT c.name, c.email, o.order_date, o.total_amount FROM customers c RIGHT JOIN orders o ON c.customer_id = o.customer_id;
+ name | email | order_date | total_amount
+------+-------+------------+--------------
+(0 ёЄЁюъ)
+
+
+postgres=# SELECT c.name, c.email, o.order_date, o.total_amount FROM customers c FULL OUTER JOIN orders o ON c.customer_id = o.customer_id;
+ name | email | order_date | total_amount
+------+-------+------------+--------------
+(0 ёЄЁюъ)
+
+
+postgres=# SELECT c.name, p.product_name FROM customers c CROSS JOIN products p;
+ОШИБКА:  столбец p.product_name не существует
+СТРОКА 1: SELECT c.name, p.product_name FROM customers c CROSS JOIN pr...
+                         ^
+postgres=# CREATE TABLE products (
+postgres(# product_id SERIAL PRIMARY KEY,
+postgres(# product_name VARCHAR(100),
+postgres(# price DECIMAL(5,1)
+postgres(# );
+ОШИБКА:  отношение "products" уже существует
+postgres=# DROP TABLE products;
+DROP TABLE
+postgres=# CREATE TABLE products (
+postgres(# product_id SERIAL PRIMARY KEY,
+postgres(# product_name VARCHAR(100),
+postgres(# price DECIMAL(5,1)
+postgres(# );
+CREATE TABLE
+postgres=# SELECT c.name, p.product_name
+postgres-# FROM customers c
+postgres-# CROSS JOIN products p;
+ name | product_name
+------+--------------
+(0 ёЄЁюъ)
+
+                                    ^
+postgres=# SELECT c.name, o.order_date, o.total_amount
+postgres-# FROM customers c
+postgres-# INNER JOIN orders o ON c.customer_id = o.customer_id
+postgres-# WHERE o.order_date >= '2024-01-01'
+postgres-# AND o.total_amount > 100;
+ name | order_date | total_amount
+------+------------+--------------
+(0 ёЄЁюъ)
+
+
+postgres=# SELECT c.name, o.order_date
+postgres-# FROM customers c
+postgres-# INNER JOIN orders o ON c.customer_id = o.customer_id;
+ name | order_date
+------+------------
+(0 ёЄЁюъ)
+
+
+postgres=# SELECT c.name
+postgres-# FROM customers c
+postgres-# LEFT JOIN orders o ON c.customer_id = o.customer_id
+postgres-# WHERE o.customer_id IS NULL;
+ name
+------
+(0 ёЄЁюъ)
+
+
+postgres=#

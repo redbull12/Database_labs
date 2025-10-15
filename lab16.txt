@@ -1,0 +1,393 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Пароль пользователя postgres:
+psql (17.6)
+ПРЕДУПРЕЖДЕНИЕ: Кодовая страница консоли (866) отличается от основной
+                страницы Windows (1251).
+                8-битовые (русские) символы могут отображаться некорректно.
+                Подробнее об этом смотрите документацию psql, раздел
+                "Notes for Windows users".
+Введите "help", чтобы получить справку.
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# SELECT salary FROM employees WHERE emp_id = 1;
+ salary
+---------
+ 65000.0
+(1 ёЄЁюър)
+
+
+postgres=*# UPDATE employees SET salary = salary - 500 WHERE emp_id = 1;
+UPDATE 1
+postgres=*# UPDATE employees SET salary = salary + 500 WHERE emp_id = 2;
+UPDATE 1
+postgres=*# COMMIT;
+COMMIT
+postgres=# \d orders
+                                             ╥рсышЎр "public.orders"
+   ╤ЄюысхЎ    |      ╥шя      | ╧Ёртшыю ёюЁЄшЁютъш | ─юяєёЄшьюёЄ№ NULL |               ╧ю єьюыўрэш■
+--------------+---------------+--------------------+-------------------+------------------------------------------
+ order_id     | integer       |                    | not null          | nextval('orders_order_id_seq'::regclass)
+ customer_id  | integer       |                    |                   |
+ order_date   | date          |                    |                   |
+ total_amount | numeric(10,2) |                    |                   |
+╚эфхъё√:
+    "orders_pkey" PRIMARY KEY, btree (order_id)
+╬уЁрэшўхэш  тэх°эхую ъы■ўр:
+    "orders_customer_id_fkey" FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# INSERT INTO orders (customer_id, total_amount) VALUES (1, 250.00);
+ОШИБКА:  INSERT или UPDATE в таблице "orders" нарушает ограничение внешнего ключа "orders_customer_id_fkey"
+ПОДРОБНОСТИ:  Ключ (customer_id)=(1) отсутствует в таблице "customers".
+postgres=!# COMMIT;
+ROLLBACK
+postgres=# \d
+                          ╤яшёюъ юЄэю°хэшщ
+ ╤їхьр  |            ╚ь             |        ╥шя         | ┬ырфхыхЎ
+--------+---------------------------+--------------------+----------
+ public | arg_chart                 | ЄрсышЎр            | postgres
+ public | arg_chart_emp_id_seq      | яюёыхфютрЄхы№эюёЄ№ | postgres
+ public | customers                 | ЄрсышЎр            | postgres
+ public | customers_customer_id_seq | яюёыхфютрЄхы№эюёЄ№ | postgres
+ public | employees                 | ЄрсышЎр            | postgres
+ public | employees_emp_id_seq      | яюёыхфютрЄхы№эюёЄ№ | postgres
+ public | orders                    | ЄрсышЎр            | postgres
+ public | orders_order_id_seq       | яюёыхфютрЄхы№эюёЄ№ | postgres
+ public | products                  | ЄрсышЎр            | postgres
+ public | products_product_id_seq   | яюёыхфютрЄхы№эюёЄ№ | postgres
+ public | sales                     | ЄрсышЎр            | postgres
+ public | sales_sale_id_seq         | яюёыхфютрЄхы№эюёЄ№ | postgres
+(12 ёЄЁюъ)
+
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# INSERT INTO customers (name, email) VALUES ('John Doe', 'john@email.com');
+INSERT 0 1
+postgres=*# INSERT INTO orders (customer_id, total_amount) VALUES (LASTVAL(), 100.00);
+ОШИБКА:  INSERT или UPDATE в таблице "orders" нарушает ограничение внешнего ключа "orders_customer_id_fkey"
+ПОДРОБНОСТИ:  Ключ (customer_id)=(2) отсутствует в таблице "customers".
+postgres=!# COMMIT * FROM CUSTOMERS;
+ОШИБКА:  ошибка синтаксиса (примерное положение: "*")
+СТРОКА 1: COMMIT * FROM CUSTOMERS;
+                 ^
+postgres=!# COMMIT * FROM customers;
+ОШИБКА:  ошибка синтаксиса (примерное положение: "*")
+СТРОКА 1: COMMIT * FROM customers;
+                 ^
+postgres=!# coomit;
+ОШИБКА:  ошибка синтаксиса (примерное положение: "coomit")
+СТРОКА 1: coomit;
+          ^
+postgres=!# COMMIT;
+ROLLBACK
+postgres=# SELECT * FROM customers;
+ customer_id | name | email
+-------------+------+-------
+(0 ёЄЁюъ)
+
+
+postgres=# INSERT INTO customers (name, email) VALUES ('Arsen', 'arsen@ex.com'), ('Bolot', 'bolot@ex.com');
+INSERT 0 2
+postgres=# BEGIN;
+BEGIN
+postgres=*# INSERT INTO customers (name, email) VALUES ('John Doe', 'john@email.com');
+INSERT 0 1
+postgres=*# INSERT INTO orders (customer_id, total_amount) VALUES (LASTVAL(), 100.00);
+INSERT 0 1
+postgres=*# COMMIT;
+COMMIT
+postgres=# BEGIN TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+BEGIN
+postgres=*# SELECT * FROM employees;
+ emp_id |  name  | last_name |     email     | department | salary  | tenure
+--------+--------+-----------+---------------+------------+---------+--------
+      3 | Samat  | Asanov    | samat@ex.com  | SFW        | 80000.0 |      1
+      4 | Kairat | Razakov   | kairat@ex.com | SFW        | 65000.0 |      1
+      5 | Sultan | Basytov   | sultan@ex.com | BA         | 70000.0 |      1
+      1 | Arsen  | Bolotov   | arsen@ex.com  | AMI        | 64500.0 |      1
+      2 | Bek    | Turatov   | bek@ex.com    | AMI        | 60500.0 |      1
+(5 ёЄЁюъ)
+
+
+postgres=*# COMMIT;
+COMMIT
+postgres=# BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+BEGIN
+postgres=*# SELECT * FROM employees WHERE salary > 60000;
+ emp_id |  name  | last_name |     email     | department | salary  | tenure
+--------+--------+-----------+---------------+------------+---------+--------
+      3 | Samat  | Asanov    | samat@ex.com  | SFW        | 80000.0 |      1
+      4 | Kairat | Razakov   | kairat@ex.com | SFW        | 65000.0 |      1
+      5 | Sultan | Basytov   | sultan@ex.com | BA         | 70000.0 |      1
+      1 | Arsen  | Bolotov   | arsen@ex.com  | AMI        | 64500.0 |      1
+      2 | Bek    | Turatov   | bek@ex.com    | AMI        | 60500.0 |      1
+(5 ёЄЁюъ)
+
+
+postgres=*# SELECT * FROM employees WHERE salary > 60000;
+ emp_id |  name  | last_name |     email     | department | salary  | tenure
+--------+--------+-----------+---------------+------------+---------+--------
+      3 | Samat  | Asanov    | samat@ex.com  | SFW        | 80000.0 |      1
+      4 | Kairat | Razakov   | kairat@ex.com | SFW        | 65000.0 |      1
+      5 | Sultan | Basytov   | sultan@ex.com | BA         | 70000.0 |      1
+      1 | Arsen  | Bolotov   | arsen@ex.com  | AMI        | 64500.0 |      1
+      2 | Bek    | Turatov   | bek@ex.com    | AMI        | 60500.0 |      1
+(5 ёЄЁюъ)
+
+
+postgres=*# COMMIT;
+COMMIT
+postgres=# BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+BEGIN
+postgres=*# SELECT * FROM employees;
+ emp_id |  name  | last_name |     email     | department | salary  | tenure
+--------+--------+-----------+---------------+------------+---------+--------
+      3 | Samat  | Asanov    | samat@ex.com  | SFW        | 80000.0 |      1
+      4 | Kairat | Razakov   | kairat@ex.com | SFW        | 65000.0 |      1
+      5 | Sultan | Basytov   | sultan@ex.com | BA         | 70000.0 |      1
+      1 | Arsen  | Bolotov   | arsen@ex.com  | AMI        | 64500.0 |      1
+      2 | Bek    | Turatov   | bek@ex.com    | AMI        | 60500.0 |      1
+(5 ёЄЁюъ)
+
+
+postgres=*# UPDATE employees SET salary = salary * 1.05;
+UPDATE 5
+postgres=*# COMMUT;
+ОШИБКА:  ошибка синтаксиса (примерное положение: "COMMUT")
+СТРОКА 1: COMMUT;
+          ^
+postgres=!# COMMIT;
+ROLLBACK
+postgres=# BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+BEGIN
+postgres=*# SELECT * FROM employees;
+ emp_id |  name  | last_name |     email     | department | salary  | tenure
+--------+--------+-----------+---------------+------------+---------+--------
+      3 | Samat  | Asanov    | samat@ex.com  | SFW        | 80000.0 |      1
+      4 | Kairat | Razakov   | kairat@ex.com | SFW        | 65000.0 |      1
+      5 | Sultan | Basytov   | sultan@ex.com | BA         | 70000.0 |      1
+      1 | Arsen  | Bolotov   | arsen@ex.com  | AMI        | 64500.0 |      1
+      2 | Bek    | Turatov   | bek@ex.com    | AMI        | 60500.0 |      1
+(5 ёЄЁюъ)
+
+
+postgres=*# UPDATE employees SET salary = salary * 1.05;
+UPDATE 5
+postgres=*# COMMIT;
+COMMIT
+postgres=#
+
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Пароль пользователя postgres:
+psql (17.6)
+ПРЕДУПРЕЖДЕНИЕ: Кодовая страница консоли (866) отличается от основной
+                страницы Windows (1251).
+                8-битовые (русские) символы могут отображаться некорректно.
+                Подробнее об этом смотрите документацию psql, раздел
+                "Notes for Windows users".
+Введите "help", чтобы получить справку.
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# SELECT salary FROM employees WHERE emp_id = 1;
+ salary
+---------
+ 65000.0
+(1 ёЄЁюър)
+
+
+postgres=*# UPDATE employees SET salary = salary - 500 WHERE emp_id = 1;
+UPDATE 1
+postgres=*# UPDATE employees SET salary = salary + 500 WHERE emp_id = 2;
+UPDATE 1
+postgres=*# COMMIT;
+COMMIT
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# INSERT INTO orders (customer_id, total_amount) VALUES (1, 250.00);
+ОШИБКА:  INSERT или UPDATE в таблице "orders" нарушает ограничение внешнего ключа "orders_customer_id_fkey"
+ПОДРОБНОСТИ:  Ключ (customer_id)=(1) отсутствует в таблице "customers".
+postgres=!# COMMIT;
+ROLLBACK
+
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# INSERT INTO customers (name, email) VALUES ('John Doe', 'john@email.com');
+INSERT 0 1
+
+
+postgres=# INSERT INTO customers (name, email) VALUES ('Arsen', 'arsen@ex.com'), ('Bolot', 'bolot@ex.com');
+INSERT 0 2
+postgres=# BEGIN;
+BEGIN
+postgres=*# INSERT INTO customers (name, email) VALUES ('John Doe', 'john@email.com');
+INSERT 0 1
+postgres=*# INSERT INTO orders (customer_id, total_amount) VALUES (LASTVAL(), 100.00);
+INSERT 0 1
+postgres=*# COMMIT;
+COMMIT
+postgres=# BEGIN TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+BEGIN
+postgres=*# SELECT * FROM employees;
+ emp_id |  name  | last_name |     email     | department | salary  | tenure
+--------+--------+-----------+---------------+------------+---------+--------
+      3 | Samat  | Asanov    | samat@ex.com  | SFW        | 80000.0 |      1
+      4 | Kairat | Razakov   | kairat@ex.com | SFW        | 65000.0 |      1
+      5 | Sultan | Basytov   | sultan@ex.com | BA         | 70000.0 |      1
+      1 | Arsen  | Bolotov   | arsen@ex.com  | AMI        | 64500.0 |      1
+      2 | Bek    | Turatov   | bek@ex.com    | AMI        | 60500.0 |      1
+(5 ёЄЁюъ)
+
+
+postgres=*# COMMIT;
+COMMIT
+postgres=# BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED;
+BEGIN
+postgres=*# SELECT * FROM employees WHERE salary > 60000;
+ emp_id |  name  | last_name |     email     | department | salary  | tenure
+--------+--------+-----------+---------------+------------+---------+--------
+      3 | Samat  | Asanov    | samat@ex.com  | SFW        | 80000.0 |      1
+      4 | Kairat | Razakov   | kairat@ex.com | SFW        | 65000.0 |      1
+      5 | Sultan | Basytov   | sultan@ex.com | BA         | 70000.0 |      1
+      1 | Arsen  | Bolotov   | arsen@ex.com  | AMI        | 64500.0 |      1
+      2 | Bek    | Turatov   | bek@ex.com    | AMI        | 60500.0 |      1
+(5 ёЄЁюъ)
+
+
+postgres=*# SELECT * FROM employees WHERE salary > 60000;
+ emp_id |  name  | last_name |     email     | department | salary  | tenure
+--------+--------+-----------+---------------+------------+---------+--------
+      3 | Samat  | Asanov    | samat@ex.com  | SFW        | 80000.0 |      1
+      4 | Kairat | Razakov   | kairat@ex.com | SFW        | 65000.0 |      1
+      5 | Sultan | Basytov   | sultan@ex.com | BA         | 70000.0 |      1
+      1 | Arsen  | Bolotov   | arsen@ex.com  | AMI        | 64500.0 |      1
+      2 | Bek    | Turatov   | bek@ex.com    | AMI        | 60500.0 |      1
+(5 ёЄЁюъ)
+
+
+postgres=*# COMMIT;
+COMMIT
+
+postgres=# BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+BEGIN
+postgres=*# SELECT * FROM employees;
+ emp_id |  name  | last_name |     email     | department | salary  | tenure
+--------+--------+-----------+---------------+------------+---------+--------
+      3 | Samat  | Asanov    | samat@ex.com  | SFW        | 80000.0 |      1
+      4 | Kairat | Razakov   | kairat@ex.com | SFW        | 65000.0 |      1
+      5 | Sultan | Basytov   | sultan@ex.com | BA         | 70000.0 |      1
+      1 | Arsen  | Bolotov   | arsen@ex.com  | AMI        | 64500.0 |      1
+      2 | Bek    | Turatov   | bek@ex.com    | AMI        | 60500.0 |      1
+(5 ёЄЁюъ)
+
+
+postgres=*# UPDATE employees SET salary = salary * 1.05;
+UPDATE 5
+postgres=*# COMMIT;
+COMMIT
+
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# INSERT INTO customers (name, email) VALUES ('Alice', 'alice@email.com');
+INSERT 0 1
+postgres=*# SAVEPOINT after_customer_insert;
+SAVEPOINT
+postgres=*# INSERT INTO orders (customer_id, total) VALUES (1, 500.00);
+ОШИБКА:  столбец "total" в таблице "orders" не существует
+СТРОКА 1: INSERT INTO orders (customer_id, total) VALUES (1, 500.00);
+                                           ^
+postgres=!# ROLLBACK TO SAVEPOINT after_customer_insert;
+ROLLBACK
+postgres=*# INSERT INTO orders (customer_id, total_amount) VALUES (1, 300.00);
+ОШИБКА:  INSERT или UPDATE в таблице "orders" нарушает ограничение внешнего ключа "orders_customer_id_fkey"
+ПОДРОБНОСТИ:  Ключ (customer_id)=(1) отсутствует в таблице "customers".
+postgres=!# COMMIT;
+ROLLBACK
+
+
+postgres=# SELECT * FROM customers;
+ customer_id |   name   |     email
+-------------+----------+----------------
+           2 | Arsen    | arsen@ex.com
+           3 | Bolot    | bolot@ex.com
+           4 | John Doe | john@email.com
+(3 ёЄЁюъш)
+
+
+postgres=# BEGIN;
+BEGIN
+postgres=*# INSERT INTO customers (name, email) VALUES ('Alice', 'alice@email.com');
+INSERT 0 1
+postgres=*# SAVEPOINT after_customer_insert;
+SAVEPOINT
+postgres=*# INSERT INTO orders (customer_id, total) VALUES (1, 500.00);
+ОШИБКА:  столбец "total" в таблице "orders" не существует
+СТРОКА 1: INSERT INTO orders (customer_id, total) VALUES (1, 500.00);
+                                           ^
+postgres=!# ROLLBACK TO SAVEPOINT after_customer_insert;
+ROLLBACK
+postgres=*# INSERT INTO orders (customer_id, total_amount) VALUES (2, 300.00);
+INSERT 0 1
+postgres=*# COMMIT;
+COMMIT
+postgres=# BEGIN;
+BEGIN
+postgres=*# INSERT INTO products (name, price) VALUES ('Laptop', 999.99);
+ОШИБКА:  столбец "name" в таблице "products" не существует
+СТРОКА 1: INSERT INTO products (name, price) VALUES ('Laptop', 999.99)...
+                                ^
+postgres=!# SAVEPOINT sp1;
+ОШИБКА:  текущая транзакция прервана, команды до конца блока транзакции игнорируются
+postgres=!#
+postgres=!# COMMIT;
+ROLLBACK
+postgres=# BEGIN;
+BEGIN
+postgres=*# INSERT INTO products (product_name, price) VALUES ('Laptop', 999.99);
+INSERT 0 1
+postgres=*# SAVEPOINT sp1;
+SAVEPOINT
+postgres=*# INSERT INTO products (product_name, price) VALUES ('Mouse', 25.99);
+INSERT 0 1
+postgres=*# SAVEPOINT sp2;
+SAVEPOINT
+postgres=*# INSERT INTO products (product_name, price) VALUES ('Invalid Product', -50.00);
+INSERT 0 1
+postgres=*# ROLLBACK TO SAVEPOINT sp2;
+ROLLBACK
+postgres=*# INSERT INTO products (product_name, price) VALUES ('Keyboard', 79.99);
+INSERT 0 1
+postgres=*# COMMIT;
+COMMIT
+postgres=# BEGIN;
+BEGIN
+postgres=*# DO $$
+postgres$*# DECLARE
+postgres$*#     insufficient_funds EXCEPTION;
+postgres$*#     current_balance DECIMAL;
+postgres$*# BEGIN
+postgres$*# SELECT salary INTO current_salary FROM employees WHERE emp_id = 2;
+postgres$*# IF current_salary < 65000 THEN RAISE insufficient_funds;
+postgres$*# END IF;
+postgres$*# UPDATE employees SET salary = salary - 1000 WHERE account_id = 2;
+postgres$*# UPDATE employees SET salary = salary + 1000 WHERE account_id = 3;
+postgres$*# EXCEPTION WHEN insufficient_funds THEN RAISE NOTICE 'Transaction failed: Insufficient funds';
+postgres$*# ROLLBACK;
+postgres$*# END $$;
+ОШИБКА:  тип "exception" не существует
+СТРОКА 3:     insufficient_funds EXCEPTION;
+                                 ^
+postgres=!#

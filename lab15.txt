@@ -1,0 +1,125 @@
+
+
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Пароль пользователя postgres:
+psql (17.6)
+ПРЕДУПРЕЖДЕНИЕ: Кодовая страница консоли (866) отличается от основной
+                страницы Windows (1251).
+                8-битовые (русские) символы могут отображаться некорректно.
+                Подробнее об этом смотрите документацию psql, раздел
+                "Notes for Windows users".
+Введите "help", чтобы получить справку.
+
+postgres=# SELECT name, last_name, salary FROM employees WHERE salary > (SELECT AVG(salary) FROM employees);
+  name  | last_name | salary
+--------+-----------+---------
+ Samat  | Asanov    | 80000.0
+ Sultan | Basytov   | 70000.0
+(2 ёЄЁюъш)
+
+                                
+postgres=# CREATE TABLE arg_chart (
+postgres(# emp_id SERIAL PRIMARY KEY);
+CREATE TABLE
+
+
+postgres=# SELECT name, last_name, department, salary, RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS dept_salary_rank FROM employees;
+  name  | last_name | department | salary  | dept_salary_rank
+--------+-----------+------------+---------+------------------
+ Arsen  | Bolotov   | AMI        | 65000.0 |                1
+ Bek    | Turatov   | AMI        | 60000.0 |                2
+ Sultan | Basytov   | BA         | 70000.0 |                1
+ Samat  | Asanov    | SFW        | 80000.0 |                1
+ Kairat | Razakov   | SFW        | 65000.0 |                2
+(5 ёЄЁюъ)
+
+
+postgres=# \d
+                          ╤яшёюъ юЄэю°хэшщ
+ ╤їхьр  |            ╚ь             |        ╥шя         | ┬ырфхыхЎ
+--------+---------------------------+--------------------+----------
+ public | arg_chart                 | ЄрсышЎр            | postgres
+ public | arg_chart_emp_id_seq      | яюёыхфютрЄхы№эюёЄ№ | postgres
+ public | customers                 | ЄрсышЎр            | postgres
+ public | customers_customer_id_seq | яюёыхфютрЄхы№эюёЄ№ | postgres
+ public | employees                 | ЄрсышЎр            | postgres
+ public | employees_emp_id_seq      | яюёыхфютрЄхы№эюёЄ№ | postgres
+ public | orders                    | ЄрсышЎр            | postgres
+ public | orders_order_id_seq       | яюёыхфютрЄхы№эюёЄ№ | postgres
+ public | products                  | ЄрсышЎр            | postgres
+ public | products_product_id_seq   | яюёыхфютрЄхы№эюёЄ№ | postgres
+(10 ёЄЁюъ)
+
+
+postgres=# CREATE TABLE sales (
+postgres(# sale_id SERIAL PRIMARY KEY,
+postgres(# year INT,
+postgres(# product_name VARCHAR(200)
+postgres(# );
+CREATE TABLE
+
+postgres=# INSERT INTO sales (year, product_name) VALUES
+postgres-# (2022, 'product1'),
+postgres-# (2022, 'product2'),
+postgres-# (2022, 'product3'),
+postgres-# (2023, 'product4'),
+postgres-# (2023, 'product5'),
+postgres-# (2024, 'product6'),
+postgres-# (2024, 'product7'),
+postgres-# (2024, 'product8');
+INSERT 0 8
+
+postgres=# ALTER TABLE sales ADD COLUMN sales_amount INT DEFAULT 0;
+ALTER TABLE
+postgres=# SELECT
+postgres-#     product_name,
+postgres-#     SUM(CASE WHEN year = 2022 THEN sales_amount ELSE 0 END) AS year_2022,
+postgres-#     SUM(CASE WHEN year = 2023 THEN sales_amount ELSE 0 END) AS year_2023,
+postgres-#     SUM(CASE WHEN year = 2024 THEN sales_amount ELSE 0 END) AS year_2024
+postgres-# FROM sales
+postgres-# GROUP BY product_name;
+ product_name | year_2022 | year_2023 | year_2024
+--------------+-----------+-----------+-----------
+ product7     |         0 |         0 |         0
+ product1     |         0 |         0 |         0
+ product8     |         0 |         0 |         0
+ product2     |         0 |         0 |         0
+ product3     |         0 |         0 |         0
+ product5     |         0 |         0 |         0
+ product4     |         0 |         0 |         0
+ product6     |         0 |         0 |         0
+(8 ёЄЁюъ)
+
+
+postgres=# SELECT
+postgres-#     emp_id,
+postgres-#     SUM(salary) OVER (PARTITION BY department) AS total_dept_salary,
+postgres-#     AVG(salary) FILTER (WHERE tenure > 5) OVER () AS avg_salary_senior
+postgres-# FROM employees;
+ emp_id | total_dept_salary | avg_salary_senior
+--------+-------------------+-------------------
+      1 |          125000.0 |
+      2 |          125000.0 |
+      5 |           70000.0 |
+      3 |          145000.0 |
+      4 |          145000.0 |
+(5 ёЄЁюъ)
+
+
+postgres=# \d orders
+                                             ╥рсышЎр "public.orders"
+   ╤ЄюысхЎ    |      ╥шя      | ╧Ёртшыю ёюЁЄшЁютъш | ─юяєёЄшьюёЄ№ NULL |               ╧ю єьюыўрэш■     
+--------------+---------------+--------------------+-------------------+------------------------------------------
+ order_id     | integer       |                    | not null          | nextval('orders_order_id_seq'::regclass)
+ customer_id  | integer       |                    |                   |
+ order_date   | date          |                    |                   |
+ total_amount | numeric(10,2) |                    |                   |
+╚эфхъё√:
+    "orders_pkey" PRIMARY KEY, btree (order_id)
+╬уЁрэшўхэш  тэх°эхую ъы■ўр:
+    "orders_customer_id_fkey" FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+
+

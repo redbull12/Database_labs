@@ -1,0 +1,258 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Пароль пользователя postgres:
+psql (17.6)
+ПРЕДУПРЕЖДЕНИЕ: Кодовая страница консоли (866) отличается от основной
+                страницы Windows (1251).
+                8-битовые (русские) символы могут отображаться некорректно.
+                Подробнее об этом смотрите документацию psql, раздел
+                "Notes for Windows users".
+Введите "help", чтобы получить справку.
+
+postgres=# SELECT COUNT(*) AS total_employees
+postgres-# FROM employees;
+ total_employees
+-----------------
+               5
+(1 ёЄЁюър)
+
+
+postgres=# SELECT COUNT(email) AS employees_with_email
+postgres-# FROM employees;
+ employees_with_email
+----------------------
+                    5
+(1 ёЄЁюър)
+
+
+postgres=# SELECT COUNT(DISTINCT department) AS unique_departments
+postgres-# FROM employees;
+ unique_departments
+--------------------
+                  3
+(1 ёЄЁюър)
+
+
+postgres=# SELECT SUM(salary) AS total_salaries
+postgres-# FROM employees;
+ total_salaries
+----------------
+       340000.0
+(1 ёЄЁюър)
+
+
+postgres=# SELECT AVG(salary) AS average_salary
+postgres-# FROM employees;
+   average_salary
+--------------------
+ 68000.000000000000
+(1 ёЄЁюър)
+
+
+postgres=# SELECT MAX(salary) AS highest_salary, MIN(salary) AS lowest_salary FROM employees;
+ highest_salary | lowest_salary
+----------------+---------------
+        80000.0 |       60000.0
+(1 ёЄЁюър)
+
+
+postgres=# SELECT department, STRING_AGG(name, ', ') AS employee_names FROM employees GROUP BY department;
+ department | employee_names
+------------+----------------
+ SFW        | Samat, Kairat
+ BA         | Sultan
+ AMI        | Arsen, Bek
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT department, ARRAY_AGG(salary) AS salary_array FROM employees GROUP BY department;
+ department |   salary_array
+------------+-------------------
+ SFW        | {80000.0,65000.0}
+ BA         | {70000.0}
+ AMI        | {65000.0,60000.0}
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT department, ARRAY_AGG(name ORDER BY last_name) AS employees FROM employees GROUP BY department;
+ department |   employees
+------------+----------------
+ AMI        | {Arsen,Bek}
+ BA         | {Sultan}
+ SFW        | {Samat,Kairat}
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT
+postgres-#     department,
+postgres-#     STDDEV(salary) AS salary_std_dev,
+postgres-#     VARIANCE(salary) AS salary_variance
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department |   salary_std_dev   |    salary_variance
+------------+--------------------+------------------------
+ SFW        | 10606.601717798213 | 112500000.000000000000
+ BA         |                    |
+ AMI        |  3535.533905932738 |  12500000.000000000000
+(3 ёЄЁюъш)
+
+
+postgres=# CREATE TABLE products (
+postgres(# product_id SERIAL PRIMARY KEY,
+postgres(# name VARCHAR(100) NOT NULL,
+postgres(# category VARCHAR(50),
+postgres(# price DECIMAL(5,1)
+postgres(# );
+CREATE TABLE
+postgres=# INSERT INTO products (name, category, price) VALUES
+postgres-# ('product1', 'category1', 1000),
+postgres-# ('product2', 'category1', 1300),
+postgres-# ('product3', 'category2', 2300),
+postgres-# ('product4', 'category3', 800),
+postgres-# ('product5', 'category3', 950),
+postgres-# ('product6', 'category3', 750);
+INSERT 0 6
+postgres=# SELECT
+postgres-#     category,
+postgres-#     COUNT(*) AS number_of_products,
+postgres-#     SUM(price) AS total_value,
+postgres-#     AVG(price) AS average_price
+postgres-# FROM products
+postgres-# GROUP BY category;
+ category  | number_of_products | total_value |     average_price
+-----------+--------------------+-------------+-----------------------
+ category3 |                  3 |      2500.0 |  833.3333333333333333
+ category1 |                  2 |      2300.0 | 1150.0000000000000000
+ category2 |                  1 |      2300.0 | 2300.0000000000000000
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT
+postgres-# CASE
+postgres-#     WHEN salary < 65000 THEN 'Under 65000'
+postgres-#     WHEN salary BETWEEN 65000 AND 75000 THEN '65000-75000'
+postgres-#     ELSE 'Over 50'
+postgres-# END AS sal_group,
+postgres-# COUNT(*) AS employee_count,
+postgres-# AVG(salary) AS avg_salary
+postgres-# FROM employees
+postgres-# GROUP BY
+postgres-# CASE    E
+postgres-#     WHEN salary < 65000 THEN 'Under 65000'
+postgres-#     WHEN salary BETWEEN 65000 AND 75000 THEN '65000-75000'
+postgres-#     ELSE 'Over 50'
+postgres-# END;
+  sal_group  | employee_count |     avg_salary
+-------------+----------------+--------------------
+ 65000-75000 |              3 | 66666.666666666667
+ Over 50     |              1 | 80000.000000000000
+ Under 65000 |              1 | 60000.000000000000
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT
+postgres-#     department,
+postgres-#     COUNT(*) AS employee_count
+postgres-# FROM employees
+postgres-# GROUP BY department
+postgres-# HAVING COUNT(*) > 1;
+ department | employee_count
+------------+----------------
+ SFW        |              2
+ AMI        |              2
+(2 ёЄЁюъш)
+
+
+postgres=# SELECT department, AVG(salary) AS dept_avg_salary
+postgres-# FROM employees
+postgres-# GROUP BY department;
+ department |  dept_avg_salary
+------------+--------------------
+ SFW        | 72500.000000000000
+ BA         | 70000.000000000000
+ AMI        | 62500.000000000000
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT
+postgres-#     emp_id,
+postgres-#     name,
+postgres-#     department,
+postgres-#     salary,
+postgres-#     AVG(salary) OVER (PARTITION BY department) AS dept_avg_salary
+postgres-# ;
+ОШИБКА:  столбец "emp_id" не существует
+СТРОКА 2:     emp_id,
+              ^
+postgres=# \d employees;
+                                               ╥рсышЎр "public.employees"
+  ╤ЄюысхЎ   |          ╥шя          | ╧Ёртшыю ёюЁЄшЁютъш | ─юяєёЄшьюёЄ№ NULL |               ╧ю єьюыўрэш■
+------------+-----------------------+--------------------+-------------------+-------------------------------------------
+ emp_id     | integer               |                    | not null          | nextval('employees_emp_id_seq'::regclass)
+ name       | character varying(50) |                    | not null          |
+ last_name  | character varying(50) |                    | not null          |
+ email      | character varying(50) |                    | not null          |
+ department | character varying(50) |                    | not null          |
+ salary     | numeric(6,1)          |                    |                   |
+╚эфхъё√:
+    "employees_pkey" PRIMARY KEY, btree (emp_id)
+
+
+postgres=# SELECT emp_id, name, department, salary, AVG(salary) OVER (PARTITION BY department) AS dept_avg_salary FROM employees;
+ emp_id |  name  | department | salary  |  dept_avg_salary
+--------+--------+------------+---------+--------------------
+      1 | Arsen  | AMI        | 65000.0 | 62500.000000000000
+      2 | Bek    | AMI        | 60000.0 | 62500.000000000000
+      5 | Sultan | BA         | 70000.0 | 70000.000000000000
+      3 | Samat  | SFW        | 80000.0 | 72500.000000000000
+      4 | Kairat | SFW        | 65000.0 | 72500.000000000000
+(5 ёЄЁюъ)
+
+
+postgres=# SELECT
+postgres-#     COUNT(*) AS total_rows,
+postgres-#     COUNT(email) AS non_null_emails,
+postgres-#     COUNT(*) - COUNT(email) AS null_emails
+postgres-# FROM employees;
+ total_rows | non_null_emails | null_emails
+------------+-----------------+-------------
+          5 |               5 |           0
+(1 ёЄЁюър)
+
+
+postgres=# SELECT
+postgres-#     department,
+postgres-#     COUNT(*) AS employee_count,
+postgres-#     MIN(salary) AS min_salary,
+postgres-#     MAX(salary) AS max_salary,
+postgres-#     AVG(salary) AS avg_salary,
+postgres-#     STDDEV(salary) AS salary_std_dev
+postgres-# FROM employees
+postgres-# GROUP BY department
+postgres-# ORDER BY avg_salary DESC;
+ department | employee_count | min_salary | max_salary |     avg_salary     |   salary_std_dev
+------------+----------------+------------+------------+--------------------+--------------------
+ SFW        |              2 |    65000.0 |    80000.0 | 72500.000000000000 | 10606.601717798213
+ BA         |              1 |    70000.0 |    70000.0 | 70000.000000000000 |
+ AMI        |              2 |    60000.0 |    65000.0 | 62500.000000000000 |  3535.533905932738
+(3 ёЄЁюъш)
+
+
+postgres=# SELECT
+postgres-#     department,
+postgres-#     COUNT(*) AS dept_count,
+postgres-#     COUNT(*)::FLOAT / (SELECT COUNT(*) FROM employees) * 100 AS percentage
+postgres-# FROM employees
+postgres-# GROUP BY department
+postgres-# ORDER BY percentage DESC;
+ department | dept_count | percentage
+------------+------------+------------
+ SFW        |          2 |         40
+ AMI        |          2 |         40
+ BA         |          1 |         20
+(3 ёЄЁюъш)
+
+
+postgres=#
